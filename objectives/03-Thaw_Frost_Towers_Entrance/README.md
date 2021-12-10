@@ -73,3 +73,72 @@ $ cat bigscan.gnmap | grep -E '(.*open.*){13}' | wc -l
 # alternative with awk:
 # awk 'BEGIN {print}{print gsub(/open/,"") ""}' bigscan.gnmap | sort -nr | head -1
 ```
+
+Greasy GopherGuts:
+> Grack. Ungh. ... Oh!  You really did it?  Well, OK then. Here's what I know
+> about the wifi here.  Scanning for Wi-Fi networks with iwlist will be
+> location-dependent. You may need to move around the North Pole and keep
+> scanning to identify a Wi-Fi network.  Wireless in Linux is supported by many
+> tools, but `iwlist` and `iwconfig` are commonly used at the command line. `curl`
+> can make HTTP requests at the command line!  By default, curl makes an
+> HTTP GET request. You can add `--request POST` as a command line argument to make
+> an HTTP POST request.  When sending HTTP POST, add `--data-binary` followed by
+> the data you want to send as the POST body.
+\
+> :link: **POST request with data** \
+   [link](https://www.educative.io/edpresso/how-to-perform-a-post-request-using-curl)
+
+```sh
+$ $ iwlist scanning
+wlan0     Scan completed :
+          Cell 01 - Address: 02:4A:46:68:69:21
+                    Frequency:5.2 GHz (Channel 40)
+                    Quality=48/70  Signal level=-62 dBm
+                    Encryption key:off
+                    Bit Rates:400 Mb/s
+                    ESSID:"FROST-Nidus-Setup"
+
+$ ~$ iwconfig wlan0 essid "FROST-Nidus-Setup"
+iwconfig: unknown command "FROST-Nidus-Setup"
+elf@075f59833d93:~$ iwconfig wlan0 essid "FROST-Nidus-Setup"
+** New network connection to Nidus Thermostat detected!
+Visit http://nidus-setup:8080/ to complete setup
+(The setup is compatible with the 'curl' utility)
+```
+
+![Nidus](/img/nidus.png)
+
+> Welcome to the Nidus Thermostat registration! Simply enter your serial number
+> below to get started. You can find the serial number on the back of your
+> Nidus Thermostat
+
+However, querying the apidoc, `/api/cooler` is available witout registration.
+Nidus Thermostat API
+
+```text
+Utilize a GET request to query information; for example, you can check the
+temperatures set on your cooler with:
+
+curl -XGET http://nidus-setup:8080/api/cooler
+
+Utilize a POST request with a JSON payload to configuration information; for
+example, you can change the temperature on your cooler using:
+
+curl -XPOST -H 'Content-Type: application/json' \
+  --data-binary '{"temperature": -40}' \
+  http://nidus-setup:8080/api/cooler
+
+WARNING: DO NOT SET THE TEMPERATURE ABOVE 0! That might melt important furniture
+```
+
+```bash
+$ curl -XPOST -H 'Content-Type: application/json' \
+    --data-binary '{"temperature": 0}' http://nidus-setup:8080/api/cooler
+{
+  "temperature": 0.96,
+  "humidity": 78.11,
+  "wind": 9.35,
+  "windchill": -2.0,
+  "WARNING": "ICE MELT DETECTED!"
+}
+```
