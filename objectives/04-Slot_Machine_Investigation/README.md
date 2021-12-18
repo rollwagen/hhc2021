@@ -26,3 +26,12 @@ Noel Boetie:
 ## Challenge: Cranberry Pi Logic Munchers
 
 ![Chompers](/img/chompers.png)
+
+Noel Boetie:
+
+> Wow - amazing score! Great work!
+> So hey, those slot machines. It seems that in his haste,
+> Jack bought some terrible hardware.
+> It seems they're susceptible to parameter tampering.
+
+:link: **Parameter Tampering** [link](https://owasp.org/www-community/attacks/Web_Parameter_Tampering)
