@@ -49,7 +49,7 @@ syscall
 ret
 ```
 
-![Debugger](/img/debugger.png)
+![Debugger](img/debugger.png)
 
 ## Challenge: Cranberry Pi Logic Munchers
 
@@ -68,7 +68,7 @@ HOHOHO  "{\"single_player\":true}"
 single_player_mode=true
 ```
 
-![Sleigh](/img/sleigh_refuell.png)
+![Sleigh](img/sleigh_refuell.png)
 
 > You did it - rock on! We're all set now that the sleigh is fueled!  So hey, let
 > me talk to you a bit about manual exploitation.  If you run into any shellcode
