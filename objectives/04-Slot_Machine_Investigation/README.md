@@ -25,7 +25,7 @@ Noel Boetie:
 
 ## Challenge: Cranberry Pi Logic Munchers
 
-![Chompers](/img/chompers.png)
+![Chompers](img/chompers.png)
 
 Noel Boetie:
 
