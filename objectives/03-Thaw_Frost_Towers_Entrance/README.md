@@ -106,7 +106,7 @@ Visit http://nidus-setup:8080/ to complete setup
 (The setup is compatible with the 'curl' utility)
 ```
 
-![Nidus](/img/nidus.png)
+![Nidus](img/nidus.png)
 
 > Welcome to the Nidus Thermostat registration! Simply enter your serial number
 > below to get started. You can find the serial number on the back of your
