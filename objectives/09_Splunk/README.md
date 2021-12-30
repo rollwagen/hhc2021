@@ -102,3 +102,43 @@ Fitzy Shortstack
 * **Sysmon for Linux - All events**
   * `index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational`
 * **Sysmon for Linux - Process creation**
+  * `index=main sourcetype=journald \
+      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1`
+* **Sysmon for Linux - Network connection**
+  * `index=main sourcetype=journald \
+      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=3`
+* **Sysmon for Linux - Using Splunk stats and sort commands \
+      to find most/least common value of a field.**
+  * `index=main sourcetype=journaldsource
+      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 \
+      user=eddie | stats count by CommandLine | sort - count`
+* **GitHub Audit Log Events**
+  * `index=main sourcetype=ghe_audit_log_monitoring`
+* **GitHub Webhook Events (Includes detailed vulnerability alerts.)**
+  * `index=main sourcetype=github_json`
+
+---
+
+* **Task 1**
+  * _Capture the commands Eddie ran most often, starting with git.  \
+         Looking only at his process launches as reported by Sysmon,  \
+         record the most common git-related CommandLine that Eddie seemed to use._
+  * `git status` - query from above
+* **Task 2**
+  * _Looking through the git commands Eddie ran, determine the remote  \
+     repository that he configured as the origin for the 'partnerapi' repo. \
+     The correct one!_
+  * `git@github.com:elfnp3/partnerapi.git`
+* **Task 3**
+  * _The 'partnerapi' project that Eddie worked on uses Docker. Gather the full
+       docker command line that Eddie used to start the 'partnerapi' project on
+       his workstation._
+  * `docker compose up`
+* **Task 4**
+  * _Eddie had been testing automated static application security testing
+       (SAST) in GitHub. Vulnerability reports have been coming into Splunk in
+       JSON format via GitHub webhooks. Search all the events in the main index
+       in Splunk and use the sourcetype field to locate these reports. Determine
+       the URL of the vulnerable GitHub repository that the elves cloned for
+       testing and document it here. You will need to search outside of Splunk
+       (try GitHub) for the original name of the repository._
