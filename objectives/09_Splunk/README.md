@@ -110,8 +110,8 @@ Fitzy Shortstack
 * **Sysmon for Linux - Using Splunk stats and sort commands \
       to find most/least common value of a field.**
   * `index=main sourcetype=journaldsource
-      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 \
-      user=eddie | stats count by CommandLine | sort - count`
+      | source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 \
+      | user=eddie | stats count by CommandLine | sort - count`
 * **GitHub Audit Log Events**
   * `index=main sourcetype=ghe_audit_log_monitoring`
 * **GitHub Webhook Events (Includes detailed vulnerability alerts.)**
@@ -142,3 +142,58 @@ Fitzy Shortstack
        the URL of the vulnerable GitHub repository that the elves cloned for
        testing and document it here. You will need to search outside of Splunk
        (try GitHub) for the original name of the repository._
+  * `https://github.com/snoopysecurity/dvws-node`
+* **Task 5**
+  * _Santa asked Eddie to add a JavaScript library from NPM to the 'partnerapi'
+      project. Determine the name of the library and record it here for our
+      workshop documentation._
+  * `holiday-utils-js`
+* **Task 6**
+  * _Another elf started gathering a baseline of the network activity that Eddie
+      generated. Start with their search and capture the full process_name field
+      of anything that looks suspicious._
+  * `/usr/bin/nc.openbsd`
+  * _query:_ `index=main sourcetype=journald
+      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=3
+      user=eddie dest_ip IN (54.175.69.219)`
+* **Task 7**
+  * _Uh oh. This documentation exercise just turned into an investigation.
+      Starting with the process identified in the previous task, look for
+      additional suspicious commands launched by the same parent process. One
+      thing to know about these Sysmon events is that Network connection events
+      don't indicate the parent process ID, but Process creation events do!
+      Determine the number of files that were accessed by a related process and
+      record it here._
+
+      ```text
+      ProcessID 686
+      ProcessId 6791
+
+      index=main sourcetype=journald \
+        source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 ProcessId=6791
+
+      ParentProcessId 6788
+
+      cat \
+      /home/eddie/.aws/credentials \
+      /home/eddie/.ssh/authorized_keys \
+      /home/eddie/.ssh/config \
+      /home/eddie/.ssh/eddie \
+      /home/eddie/.ssh/eddie.pub \
+      /home/eddie/.ssh/known_hosts
+      ```
+
+* **Task 8**
+  * _Use Splunk and Sysmon Process creation data to identify the name of the
+      Bash script that accessed sensitive files and (likely) transmitted them to
+      a remote IP address._
+  * `preinstall.sh`
+  * _query:_ `index=main sourcetype=journald
+      source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1
+      ProcessId=6788`
+
+>
+> Thank you for helping Santa complete his investigation! Santa says you're a **whiz**!
+>
+
+![PP](img/parent_process.png)
