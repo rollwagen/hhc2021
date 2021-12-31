@@ -1,5 +1,7 @@
 # 9 Splunk
 
+_Difficulty:_  :evergreen_tree: :evergreen_tree: :evergreen_tree:
+
 > Help Angel Candysalt solve the Splunk challenge in Santa's great hall.
 > _Fitzy Shortstack_ is in Santa's lobby, and he knows a few things about
 > Splunk. What does Santa call you when when you complete the analysis?
