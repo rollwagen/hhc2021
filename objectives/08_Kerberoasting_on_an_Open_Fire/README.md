@@ -1,7 +1,6 @@
 # 8) Kerberoasting on an Open Fire
 
-_Difficulty:_  :evergreen_tree: :evergreen_tree: :evergreen_tree: \
-  :evergreen_tree: :evergreen_tree:
+_Difficulty:_  :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree: :evergreen_tree:
 
 > Obtain the secret sleigh research document from a host on the Elf University
 > domain. What is the first secret ingredient Santa urges each elf and reindeer
