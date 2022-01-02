@@ -28,7 +28,6 @@ Ribb Bonbowford:
 > the ().
 
 ```python
-import elf, munchkins, levers, lollipops, yeeters, pits
 # Grab our lever object
 lever = levers.get(0)
 munchkin = munchkins.get(0)
@@ -70,8 +69,6 @@ elf.moveTo(lollipop0.position)
 elf.moveTo({"x":2,"y":2})
 
 # Level 4
-import elf, munchkins, levers, lollipops, yeeters, pits
-# Complete the code below:
 lever0, lever1, lever2, lever3, lever4 = levers.get()
 # Move onto lever4 - This lever wants a str object:
 elf.moveTo(lever4.position)
@@ -105,7 +102,6 @@ lever0.pull(d)
 elf.moveTo({"x":2,"y":2})
 
 # Level 6
-import elf, munchkins, levers, lollipops, yeeters, pits
 lever = levers.get(0)
 d = lever.data()
 elf.moveTo(lever.position)
@@ -131,4 +127,25 @@ elf.moveTo({"x":7,"y":1})
 elf.moveLeft(2)
 elf.moveDown(11)
 elf.moveTo({"x":2,"y":2})
+
+# Level 8
+all_lollipops = lollipops.get()
+for lollipop in all_lollipops:
+    elf.moveTo(lollipop.position)
+lever = levers.get(0)
+elf.moveTo(lever.position)
+lever.pull(["munchkins rule"] + lever.data())
+elf.moveTo({"x":5,"y":4})
+elf.moveTo({"x":2,"y":2})
 ```
+
+Ribb Bonbowford:
+> Gosh, with skills like that, I'll bet you could help figure out what's really
+> going on next door... And, as I promised, let me tell you what I know about
+> SQL injection. I hear that having source code for vulnerability discovery
+> dramatically changes the vulnerability discovery process. I imagine it changes
+> how you approach an assessment too. When you have the source code, API
+> documentation becomes tremendously valuable. Who knows? Maybe you'll even find
+> more than one vulnerability in the code.
+
+[mysqljs/mysql](https://github.com/mysqljs/mysql)
