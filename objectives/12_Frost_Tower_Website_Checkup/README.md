@@ -148,4 +148,5 @@ Ribb Bonbowford:
 > documentation becomes tremendously valuable. Who knows? Maybe you'll even find
 > more than one vulnerability in the code.
 
-[mysqljs/mysql](https://github.com/mysqljs/mysql)
+* Hint: [mysqljs/mysql](https://github.com/mysqljs/mysql)
+* Hint: [express session](https://www.npmjs.com/package/express-session)
