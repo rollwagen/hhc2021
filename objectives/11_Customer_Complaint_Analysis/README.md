@@ -91,3 +91,22 @@ _Tinsel Upatree:_
 [rfc3514]: https://datatracker.ietf.org/doc/html/rfc3514
 [wireshark]: https://www.wireshark.org
 [display_filters]: https://wiki.wireshark.org/DisplayFilters
+
+From RFC:
+> Benign packets have this bit set to 0; those that
+> are used for an attack will have the bit set to 1.
+
+Wireshark filter used:
+`ip.flags.rb eq 1 && http.request.method == "POST"`
+
+Next: File -> Export Objects -> HTTP
+and then just using `grep` on the files
+and reading/looking at complaints:
+
+```text
+name=Hagg&troll_id=2013&guest_info=Incredibly+angry+lady+in+room+1024
+name=Flud&troll_id=2083&guest_info=Very+cranky+lady+in+room+1024
+Yaqh&troll_id=2796&guest_info=Snooty+lady+in+room+1024&description=
+```
+
+_Answer:_ Flud Hagg Yaqh
