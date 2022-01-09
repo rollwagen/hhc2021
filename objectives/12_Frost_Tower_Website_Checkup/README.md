@@ -27,6 +27,8 @@ Ribb Bonbowford:
 > you ever need to pass a function to a munchkin, you can use myFunction without
 > the ().
 
+## Challenge
+
 ```python
 # Grab our lever object
 lever = levers.get(0)
@@ -150,3 +152,39 @@ Ribb Bonbowford:
 
 * Hint: [mysqljs/mysql](https://github.com/mysqljs/mysql)
 * Hint: [express session](https://www.npmjs.com/package/express-session)
+
+## Objective (FRost Tower Website Checkup)
+
+Session checking (logged in yes/no)
+generallly by validating if `session.uniqueID` exists.
+
+```javascript
+app.get('/detail/:id', function(req, res, next) {
+    session = req.session;
+    var reqparam = req.params['id'];
+    var query = "SELECT * FROM uniquecontact WHERE id=";
+
+    if (session.uniqueID){
+```
+
+```javascript
+app.post('/postcontact', function(req, res, next){
+    var fullname = xss( ReplaceAnyMatchingWords(req.body.fullname) );
+    ...
+    var date_created = dateFormat(date, "yyyy-mm-dd hh:MM:ss");
+
+    tempCont.query("SELECT * from uniquecontact where email="+tempCont.escape(email),
+          function(error, rows, fields){
+
+          ...
+
+        var rowlength = rows.length;
+        if (rowlength >= "1"){
+            session = req.session;
+            session.uniqueID = email;
+            req.flash('info', 'Email Already Exists');
+            res.redirect("/contact");
+
+```
+
+Registering twice will set `session.uniqueID`.
